@@ -1,8 +1,6 @@
 import axios from 'axios';
 
-// ✅ Base URL for your Flask backend
-const API_URL = 'http://127.0.0.1:5001/api';
-
+const API_URL = 'https://resume-builder-live.onrender.com/api';
 // ✅ Allow cookies/session handling
 axios.defaults.withCredentials = true;
 
