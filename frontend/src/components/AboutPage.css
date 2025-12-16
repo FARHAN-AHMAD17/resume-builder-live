@@ -1,0 +1,58 @@
+/* ==============================================================================
+   INSTRUCTIONS: This is the complete, updated code for AboutPage.css
+   All styles related to the feedback form have been removed.
+   ============================================================================== */
+
+.about-container {
+  padding: 30px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.about-title {
+  font-size: 1.8rem;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+}
+
+.about-card {
+  background: #25273C; 
+  border-radius: 8px;
+  padding: 25px;
+  border: 1px solid #3D3B54;
+  margin-bottom: 20px;
+}
+
+.about-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #FFFFFF;
+  font-size: 1.1rem;
+}
+
+.about-card p {
+  line-height: 1.6;
+  color: #A9A9B2;
+  margin: 0;
+}
+
+/* Styles for the Developer Contact card */
+.developer-info p {
+  margin-bottom: 10px;
+}
+
+.developer-info p:last-child {
+  margin-bottom: 0;
+}
+
+.developer-info a {
+  color: #7367F0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.developer-info a:hover {
+  text-decoration: underline;
+}
+
+/* All styles for .feedback-card, form, inputs, buttons, etc. have been removed. */

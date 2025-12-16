@@ -1,0 +1,149 @@
+/* src/components/AuthPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.auth-container {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e, #4b0082);
+  perspective: 1200px;
+}
+
+/* === 3D Card Styling === */
+.auth-card {
+  width: 360px;
+  height: 460px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease-in-out;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+}
+
+.auth-card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* === Card Faces === */
+.auth-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  box-sizing: border-box;
+  transition: box-shadow 0.3s ease;
+}
+
+.auth-face:hover {
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.auth-face.back {
+  transform: rotateY(180deg);
+}
+
+/* === Headings === */
+.auth-face h2 {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #333333 !important; /* A dark gray, !important to override other styles */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: 'Poppins', sans-serif; /* Explicitly set the font */
+}
+
+/* === Forms === */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #8a2be2;
+  box-shadow: 0 0 6px rgba(138, 43, 226, 0.3);
+}
+
+/* === Buttons === */
+.auth-btn {
+  background: linear-gradient(135deg, #8a2be2, #6a0dad);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-btn:hover {
+  transform: translateY(-3px);
+  opacity: 0.95;
+  box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+}
+
+/* === Text Links === */
+.switch-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.switch-text span {
+  color: #8a2be2;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.switch-text span:hover {
+  text-decoration: underline;
+  color: #6a0dad;
+}
+
+/* === Error Message === */
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+/* === Flip Shine Effect === */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 15px;
+  background: linear-gradient(120deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+  transform: translateX(-100%);
+  animation: shine 4s infinite linear;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

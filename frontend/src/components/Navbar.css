@@ -1,0 +1,48 @@
+/* ==============================================================================
+   INSTRUCTIONS: Replace the entire content of Navbar.css
+   This version right-aligns the user info after removing the breadcrumb.
+   ============================================================================== */
+
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #25273C;
+  border-bottom: 1px solid #3D3B54;
+  color: #A9A9B2;
+}
+
+/* This rule is no longer needed but is kept for reference if you add breadcrumbs back later */
+.breadcrumb {
+  font-size: 0.9rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  /* ✅ THIS IS THE NEW LINE: It pushes the user info to the far right. */
+  margin-left: auto;
+}
+
+.user-info .username {
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.logout-button {
+  background-color: #3D3B54;
+  color: #FFFFFF;
+  border: 1px solid #7367F0;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #7367F0;
+  color: #FFFFFF;
+}
