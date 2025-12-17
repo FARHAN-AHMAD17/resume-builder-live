@@ -56,8 +56,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///' + os.path.j
 app.config['SECRET_KEY'] = 'a_very_secret_key_change_this_later'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 db = SQLAlchemy(app)
-with app.app_context():
-    db.create_all()
 
 @app.route("/api")
 def api_root(): return jsonify({"message": "API is running!"})
@@ -570,6 +568,8 @@ def handle_contact_form():
         return jsonify({'message': 'Feedback sent!'}), 200
     except Exception as e:
         traceback.print_exc(); return jsonify({'error': 'Could not send email.'}), 500
+with app.app_context():
+    db.create_all()
 
 if __name__ == '__main__':
     with app.app_context(): db.create_all()
