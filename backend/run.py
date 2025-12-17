@@ -56,6 +56,7 @@ app.config['SECRET_KEY'] = 'a_very_secret_key_change_this_later'
 # ✅ FIX 2: Allow Cross-Site Cookies (Required for Vercel -> Render)
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_pre_ping': True}
 db = SQLAlchemy(app)
 
 @app.route("/api")
