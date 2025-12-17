@@ -33,7 +33,7 @@ load_dotenv()
 
 app = Flask(__name__)
 # Allow all origins temporarily so your live frontend works immediately
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+CORS(app, resources={r"/api/*": {"origins": ["https://resume-builder-live.vercel.app"]}}, supports_credentials=True)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
@@ -53,7 +53,9 @@ if database_url and database_url.startswith("postgres://"):
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///' + os.path.join(BASE_DIR, 'site.db')
 app.config['SECRET_KEY'] = 'a_very_secret_key_change_this_later'
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+# ✅ FIX 2: Allow Cross-Site Cookies (Required for Vercel -> Render)
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 db = SQLAlchemy(app)
 
 @app.route("/api")
