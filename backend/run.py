@@ -24,7 +24,6 @@ import copy
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate
 from io import BytesIO
-from sentence_transformers import SentenceTransformer, util
 from json_repair import repair_json
 from openai import OpenAI
 import smtplib
@@ -81,7 +80,10 @@ def ensure_models_ready():
         configure_ai_and_models()
 
 def configure_ai_and_models():
-    global bert_model; print("Configuring AI models...")
+    global bert_model
+    # ✅ Moved import inside here to fix Timeout Error
+    from sentence_transformers import SentenceTransformer
+    print("Configuring AI models...")
     try:
         bert_model = SentenceTransformer('all-MiniLM-L6-v2')
         print("✅ BERT model loaded successfully.")
@@ -99,6 +101,7 @@ def extract_text_from_file(file_stream, file_name):
     return text
 
 def calculate_match_score_bert(resume_text, job_description, is_raw_resume=False):
+    from sentence_transformers import util
     # Scoring function with different logic for raw vs optimized resumes
     import nltk; from nltk.tokenize import sent_tokenize; global bert_model, DOMAIN_KEYWORDS
     ensure_models_ready()
