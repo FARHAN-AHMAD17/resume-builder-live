@@ -56,6 +56,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///' + os.path.j
 app.config['SECRET_KEY'] = 'a_very_secret_key_change_this_later'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 db = SQLAlchemy(app)
+with app.app_context():
+    db.create_all()
 
 @app.route("/api")
 def api_root(): return jsonify({"message": "API is running!"})
