@@ -76,22 +76,12 @@ resume_data_cache = {}
 last_resume_cache = {}  # per-user last successful resume_data with its cache_key
 
 def ensure_models_ready():
-    """Lazily load models if not already loaded."""
-    global bert_model
-    if bert_model is None:
-        configure_ai_and_models()
+    """Do nothing - we are using OpenAI now to save memory."""
+    pass
 
 def configure_ai_and_models():
-    global bert_model
-    # ✅ Moved import inside here to fix Timeout Error
-    from sentence_transformers import SentenceTransformer
-    print("Configuring AI models...")
-    try:
-        bert_model = SentenceTransformer('all-MiniLM-L6-v2')
-        print("✅ BERT model loaded successfully.")
-    except Exception as e: print(f"FATAL ERROR: Could not load BERT model. Error: {e}"); sys.exit(1)
-    print("✅ Generative AI is now accessed via the OpenAI API.")
-
+    print("✅ Generative AI is accessed via the OpenAI API (Lightweight Mode).")
+    
 def extract_text_from_file(file_stream, file_name):
     # This function is unchanged
     text = ""
@@ -103,42 +93,37 @@ def extract_text_from_file(file_stream, file_name):
     return text
 
 def calculate_match_score_bert(resume_text, job_description, is_raw_resume=False):
-    from sentence_transformers import util
-    # Scoring function with different logic for raw vs optimized resumes
-    import nltk; from nltk.tokenize import sent_tokenize; global bert_model, DOMAIN_KEYWORDS
-    ensure_models_ready()
+    print(f"--- Calculating Match Score via OpenAI (Type: {'RAW' if is_raw_resume else 'OPTIMIZED'}) ---")
     if not resume_text or not job_description: return 0.0
-    try: nltk.data.find("tokenizers/punkt")
-    except LookupError: nltk.download("punkt", quiet=True)
-    if 'DOMAIN_KEYWORDS' not in globals(): DOMAIN_KEYWORDS = {"Software Engineering": ["software", "development"], "Data Science": ["data analysis", "python"], "Machine Learning": ["machine learning"], "Cloud Computing": ["cloud", "aws"]}
-    resume_sentences, jd_sentences = sent_tokenize(str(resume_text)), sent_tokenize(str(job_description))
-    try: base_score = sum(util.cos_sim(bert_model.encode(resume_sentences, convert_to_tensor=True), bert_model.encode(jd_sentences, convert_to_tensor=True)).max(dim=1).values.cpu().tolist()) / max(len(resume_sentences), 1)
-    except: base_score = float(util.cos_sim(bert_model.encode(str(resume_text), convert_to_tensor=True), bert_model.encode(str(job_description), convert_to_tensor=True)).item())
-    jd_lower, resume_lower = str(job_description).lower(), str(resume_text).lower()
-    detected_domain, max_hits = None, 0;
-    for domain, kws in DOMAIN_KEYWORDS.items():
-        if (hits := sum(1 for kw in kws if kw in jd_lower)) > max_hits: max_hits, detected_domain = hits, domain
-    matched_keywords = [kw for kw in DOMAIN_KEYWORDS.get(detected_domain, []) if kw in resume_lower and kw in jd_lower]
-    keyword_boost = (len(matched_keywords) / max(len(DOMAIN_KEYWORDS.get(detected_domain, [])), 1)) * 25
-    final_score = (base_score * 100 * 0.75) + keyword_boost
-    if final_score < 50: final_score = 50 + (final_score / 2)
-    elif final_score > 95: final_score = 95 - ((final_score - 95) / 2)
     
-    # Different logic based on resume type
-    if is_raw_resume:
-        # For raw/original resume: set scores between 66-77% to 65% for display in 'before' section
-        if 66 <= final_score <= 77:
-            final_score = 65.0
-            print("[SCORE ADJUSTMENT] Raw Resume Score SET to 65.0% for 66-77% range")
-        # (Optional: keep previous logic for 70-77% if needed, or remove if replaced by above)
-    else:
-        # For optimized resume: keep the buff zone (70-77% boosted to 78%)
-        if 69 < final_score < 78: final_score = 78.0; print("[SCORE ADJUSTMENT] Optimized Resume Score BOOSTED to 78.0%")
-    
-    final_score = round(min(100, final_score), 2)
-    print(f"[MATCH DEBUG] Domain={detected_domain}, Base={base_score:.3f}, Matched={matched_keywords}, Final={final_score}%, Type={'RAW' if is_raw_resume else 'OPTIMIZED'}")
-    return final_score
+    try:
+        messages = [
+            {"role": "system", "content": "You are an ATS (Applicant Tracking System) expert. Analyze the Resume vs the Job Description. Give a strict match score from 0 to 100 based on keywords, skills, and experience match. Output ONLY the number (e.g. 75), nothing else."},
+            {"role": "user", "content": f"JOB DESCRIPTION:\n{job_description}\n\nRESUME:\n{resume_text}"}
+        ]
+        
+        response_text = generate_with_openai(messages)
+        
+        import re
+        match = re.search(r'\d+', str(response_text))
+        score = float(match.group()) if match else 50.0
+        
+        final_score = min(100.0, max(0.0, score))
+        
+        # Apply your logic for Raw vs Optimized display
+        if is_raw_resume:
+            if 66 <= final_score <= 77: 
+                final_score = 65.0
+        else:
+            if 69 < final_score < 78: 
+                final_score = 78.0
+                
+        print(f"[MATCH SCORE] OpenAI calculated: {final_score}%")
+        return final_score
 
+    except Exception as e:
+        print(f"❌ Error calculating score with OpenAI: {e}")
+        return 50.0
 
 def normalize_resume_for_template(template_id, data):
     """Best-effort adapter so one canonical resume payload can render in all templates."""
